@@ -1,5 +1,5 @@
+import answer
 import vclass
-import anskey
 import configparser
 
 def input_valid_url(message:str, requirement:tuple):
@@ -28,12 +28,12 @@ def main(config_path:str='config.ini'):
     quiz = vclass.Quiz(vstudent.active_browser, quiz_url)
 
 def ondev():
-    path = 'doc/anskey1.docx'
-    ansdoc = anskey.AnswerDOCX(path)
+    path = 'doc/anskey(1).docx'
+    ansdoc = answer.DOCX(path)
     for qna in ansdoc.QnA:
         print(qna['question'])
         print(qna['answer'], '\n')
 
 if __name__ == "__main__":
-    main()
-    #ondev()
+    #main()
+    ondev()
