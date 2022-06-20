@@ -15,14 +15,13 @@ class VStudent:
                  config,
                  driver_path:str='driver/geckodriver.exe',
                  driver_log_path:str='driver/geckodriver.log',
-                 verbose:int=1,
-                 confirm:bool=True):
+                 verbose:int=1):
         self.verbose = verbose
         self.config = config
         debug.log(f"VStudent: {config['login']['username']}\n")
 
         # VStudent confirmation
-        if confirm:
+        if self.config['vclass'].getboolean('login_confirmation'):
             self._vstudent_confirmation()
 
         debug.separate(self.verbose)
@@ -55,7 +54,7 @@ class VStudent:
         form_password = self.browser.find_element(By.ID, 'password')
         form_password.send_keys(self.config['login']['password'])
 
-        # press log in button
+        # click log in button
         if nologin:
             return
         button_login = self.browser.find_element(By.ID, 'loginbtn')
@@ -107,28 +106,28 @@ class Course:
 
         return desc
 
-class Assignment:
+class Quiz:
     def __init__(self, browser:WebDriver, page_url:str, verbose:int=1):
         self.browser = browser
         self.page_url = page_url
         self.verbose = verbose
 
-        # go to assignment page
+        # go to quiz page
         self.browser.get(page_url)
         WebDriverWait(self.browser, 5).until(
             EC.presence_of_all_elements_located((By.ID, 'page-header')))
 
-        # assignment page confirmation
+        # quiz page confirmation
         try:
             assert self.browser.current_url == page_url
-            debug.log("Assignment page reached", self.verbose, newline=True)
+            debug.log("Quiz page reached", self.verbose, newline=True)
             debug.log(f"Course title:\n{self.browser.find_element(By.CSS_SELECTOR, 'h1').text}")
         except:
-            debug.log("Failed to reach assignment page", self.verbose, newline=True)
+            debug.log("Failed to reach quiz page", self.verbose, newline=True)
             exit()
 
     def describe(self) -> dict:
-        """ Assignment description """
+        """ Quiz description """
         desc = {
             'id' : '',
             'title' : '',
