@@ -136,3 +136,6 @@ driver/*
 
 # Doc
 doc/*
+
+# Dummy page
+vclass_page/*

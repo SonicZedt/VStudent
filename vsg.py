@@ -28,11 +28,11 @@ def main(config_path:str='config.ini'):
     quiz = vclass.Quiz(vstudent.active_browser, quiz_url)
 
 def ondev():
-    path = 'doc/anskey(1).docx'
+    path = 'doc/anskey_01.docx'
     ansdoc = answer.DOCX(path)
-    for qna in ansdoc.QnA:
-        print(qna['question'])
-        print(qna['answer'], '\n')
+    #for qna in ansdoc.QnA:
+    #    print(qna['question'])
+    #    print(qna['answer'], '\n')
 
 if __name__ == "__main__":
     #main()
