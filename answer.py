@@ -56,7 +56,7 @@ class DOCX:
             ansdoc_type = get_ansdoc_type(choices)
             if ansdoc_type == 0:
                 # type 0 is choices with no answer
-                return '[no answer]'
+                return ''
             elif ansdoc_type == 1:
                 # type 1 answer is a Paragraph with unique style
                 answer_style = [answer.style for answer in choices]
@@ -74,7 +74,6 @@ class DOCX:
 
             # define QnA by using "Select one:" as keyword
             keyword = "Select one:"
-            print(paragraph.text)
             if keyword not in paragraph.text:
                 continue
 
