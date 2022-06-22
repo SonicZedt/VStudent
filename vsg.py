@@ -34,24 +34,17 @@ def get_answer_doc_path(ext:str='.docx') -> str:
             elif choice == 'n':
                 exit()
 
-def answer_quiz(quiz:vclass.Quiz, count:int, ansdoc:answer.DOCX):
+def answer_quiz(quiz:vclass.Quiz, count:int, qna:answer.QnA) -> int:
+    """ Answer quiz 
+    return: answered question count """
     debug.log(f"total question: {count}", newline=True)
     answered_count = 0
     next_question_available = quiz.next_question(check=True)
 
-    for _ in range(1, count+1):
+    #for _ in range(1, count+1):
+    for _ in range(1, 2):
         question = quiz.get_current_question()       
-
-        # get answer from defined list of dict
-        debug.log("Chceking answer ...", newline=True)
-        for qna in ansdoc.QnA:
-            if qna['question'] != question:
-                continue
-            if not qna['answer']:
-                continue
-            ans = qna['answer']
-
-        # answer the question
+        ans = qna.get_answer(question)
         answered = quiz.answer_current_question(question, ans)
 
         if answered:
@@ -61,6 +54,7 @@ def answer_quiz(quiz:vclass.Quiz, count:int, ansdoc:answer.DOCX):
         next_question_available = quiz.next_question()
 
     debug.log(f"Answered {answered_count} out of {count}", newline=True)
+    return answered_count
 
 def main(config_path:str='config.ini'):
     config = configparser.ConfigParser()
@@ -71,17 +65,25 @@ def main(config_path:str='config.ini'):
     #ansdoc = answer.DOCX(get_answer_doc_path())
     ansdoc = answer.TXT(get_answer_doc_path(ext='.txt'))
 
+    # verify quiz url
     quiz_url = input_valid_url(
         message="Quiz URL: ",
         requirement=('quiz', 'id='))
 
+    # login to vclass
     vstudent = vclass.VStudent(config)
     vstudent.login()
 
+    # go to quiz page and attempt quiz
     quiz = vclass.Quiz(vstudent.active_browser, quiz_url)
     question_count = quiz.attempt()
 
-    answer_quiz(quiz, question_count, ansdoc)
+    # answer quiz
+    answered_count = answer_quiz(quiz, question_count, ansdoc.qna)
+    ask_submit_confirmation = config['vclass'].getboolean('submit_confirmation')
+    if (answered_count == question_count):
+        if quiz.ask_submit_confirmation(ask_submit_confirmation):
+            quiz.submit()
 
 if __name__ == "__main__":
     main()

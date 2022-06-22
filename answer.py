@@ -137,6 +137,10 @@ class TXT:
         """ return file extension """
         return self.path.split('.')[-1]
 
+    @property
+    def qna(self) -> QnA:
+        return self.QnA
+
     def __open_txt_files(self) -> list[str]:
         """ Open txt file and return list of lines """
         with open(self.path, 'r') as f:
