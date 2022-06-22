@@ -2,6 +2,27 @@ import docx
 from docx.document import Document
 from docx.text.paragraph import Paragraph
 
+class QnA:
+    def __init__(self, qna:list=[]):
+        """ QnA is a list of dict contains question and answer """
+        self.qna = qna
+
+    @property
+    def count(self):
+        return len(self.qna)
+
+    def append(self, dict:dict):
+        self.qna.append(dict)
+
+    def get_answer(self, question:str):
+        for qna in self.qna:
+            if qna['question'] == question:
+                return qna['answer']
+
+    def print(self):
+        for qna in self.qna:
+            print(qna)
+
 class DOCX:
     def __init__(self, path:str):
         """ The answer document
@@ -14,6 +35,11 @@ class DOCX:
         self.doc = self.__redefine_doc(docx.Document(path))
         self.__remove_textboxt()
         self.QnA = self.__define_QnA()
+
+    @property
+    def ext(self) -> str:
+        """ return file extension """
+        return self.path.split('.')[-1]
 
     def __redefine_doc(self, doc:Document):
         """ Somehow fixed auto-complete problem """
@@ -93,3 +119,46 @@ class DOCX:
             QnA_list.append(QnA)
         
         return QnA_list
+
+class TXT:
+    # temporary solution
+    def __init__(self, path:str):
+        """ The answer document in TXT
+
+        Parameter
+        ---------
+        path    : str, path to document.txt """
+        self.path = path
+        QnA_list = self.__open_txt_files()
+        self.QnA = self.__define_QnA(QnA_list)
+    
+    @property
+    def ext(self) -> str:
+        """ return file extension """
+        return self.path.split('.')[-1]
+
+    def __open_txt_files(self) -> list[str]:
+        """ Open txt file and return list of lines """
+        with open(self.path, 'r') as f:
+            lines = f.readlines()
+            lines.append('\n')
+            return lines
+    
+    def __define_QnA(self, QnA_list) -> QnA:
+        qna = QnA()
+
+        for i, line in enumerate(QnA_list):
+            if line != '\n':
+                continue
+
+            question = QnA_list[i-2]
+            answer = QnA_list[i-1]
+
+            if '\n' in question:
+                question = question.split('\n')[0]
+            if '\n' in answer:
+                answer = answer.split('\n')[0]
+            
+            qna.append({'question':question, 'answer':answer})
+
+        return qna
