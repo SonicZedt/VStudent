@@ -144,10 +144,13 @@ class Quiz:
         button_attempt = self.browser.find_element(By.CLASS_NAME, 'btn-secondary')
         button_attempt.click()
 
-        #WebDriverWait(self.browser, 5).until(
-        #    EC.presence_of_all_elements_located((By.ID, 'id_submitbutton')))
-        #button_confirm_attemp = self.browser.find_element(By.ID, 'id_submitbutton')
-        #button_confirm_attemp.click()
+        try:
+            WebDriverWait(self.browser, 5).until(
+                EC.presence_of_all_elements_located((By.ID, 'id_submitbutton')))
+            button_confirm_attemp = self.browser.find_element(By.ID, 'id_submitbutton')
+            button_confirm_attemp.click()
+        except:
+            pass
 
         WebDriverWait(self.browser, 5).until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, 'endtestlink')))
@@ -187,7 +190,7 @@ class Quiz:
         # click radio button of answer
         for answer_text in answer_list:
             if answer in answer_text:
-                radio_list[answer_list.index(answer)].click()
+                radio_list[answer_list.index(answer_text)].click()
                 answered = True
                 break
 
@@ -215,7 +218,7 @@ class Quiz:
         if submit_button.get_attribute('value') == 'Finish attempt ...':
             submit_button.click()
 
-    def ask_submit_confirmation(self, ask:bool=True) -> bool:
+    def ask_submit_quiz_confirmation(self, ask:bool=True) -> bool:
         """ Submit quiz confirmation
         params: ask - return True right away without confirmation if False """
         if not ask:

@@ -1,3 +1,4 @@
+import time
 import answer
 import vclass
 import configparser
@@ -41,14 +42,16 @@ def answer_quiz(quiz:vclass.Quiz, count:int, qna:answer.QnA) -> int:
     answered_count = 0
     next_question_available = quiz.next_question(check=True)
 
-    #for _ in range(1, count+1):
-    for _ in range(1, 2):
+    for _ in range(1, count+1):
+        time.sleep(2)
         question = quiz.get_current_question()       
         ans = qna.get_answer(question)
-        answered = quiz.answer_current_question(question, ans)
 
-        if answered:
-            answered_count = answered_count + 1
+        # answer if answer exist
+        if ans:
+            answered = quiz.answer_current_question(question, ans)
+            if answered:
+                answered_count = answered_count + 1
         if not next_question_available:
             break
         next_question_available = quiz.next_question()
@@ -80,9 +83,9 @@ def main(config_path:str='config.ini'):
 
     # answer quiz
     answered_count = answer_quiz(quiz, question_count, ansdoc.qna)
-    ask_submit_confirmation = config['vclass'].getboolean('submit_confirmation')
+    ask_submit_quiz_confirmation = config['vclass'].getboolean('submit_quiz_confirmation')
     if (answered_count == question_count):
-        if quiz.ask_submit_confirmation(ask_submit_confirmation):
+        if quiz.ask_submit_quiz_confirmation(ask_submit_quiz_confirmation):
             quiz.submit()
 
 if __name__ == "__main__":
