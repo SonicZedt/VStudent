@@ -113,6 +113,15 @@ class DOCX:
                 style_freq = [answer_style.count(style) for style in answer_style]
                 return choices[style_freq.index(min(style_freq))].text
 
+            # TODO: get answer based on unique radio buttons (type 2)
+            # radio button is a image
+            # there should be:
+            ## - 4*n radio button (n is number of question) in a page
+            ##   one of them could will be selected as an answer and returned
+            ## - possibility of a checklist or cross mark next to an answer
+            ##   (this will called correction)
+            ## - radio button, checklist, and cross mark is an image 
+
         # remove empty paragraph
         paragraphs = [paragraph for paragraph in self.doc.paragraphs if paragraph.runs]
         keyword = "Select one:"
