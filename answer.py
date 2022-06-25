@@ -139,7 +139,6 @@ class DOCX:
             if keyword not in paragraph.text:
                 continue
 
-            answer_choices = []
             correct_answer_available = False
             correct_answer_keyword = 'The correct answer is: '
             try:
@@ -150,10 +149,12 @@ class DOCX:
                     correct_answer = correct_answer.split(correct_answer_keyword)[1]
                     qna.append({'question': question, 'answer': correct_answer})
                     correct_answer_available = True
+                    continue
             except:
-                # the four choices of answer must be right after keyword (type 1)
-                answer_choices = paragraphs[i+1:i+5]
+                pass
 
+            # the four choices of answer must be right after keyword (type 1)
+            answer_choices = paragraphs[i+1:i+5]
             if not answer_choices and not correct_answer_available:
                 continue
 
