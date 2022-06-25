@@ -18,12 +18,12 @@ def input_valid_url(message:str, requirement:tuple):
         elif url:
             return url
 
-def get_answer_doc_path(ext:str='.docx') -> str:
+def get_answer_doc_path(accepted_ext:list[str]=['.docx', '.txt']) -> str:
     """ Get answered documen path """
     while True:
         print("Select answered quiz document")
         path = filedialog.askopenfilename(title='Select answered quiz document')
-        if path.endswith(ext):
+        if [True for ext in accepted_ext if path.endswith(ext)]:
             return path
         elif not path:
             exit()
@@ -35,7 +35,7 @@ def get_answer_doc_path(ext:str='.docx') -> str:
             elif choice == 'n':
                 exit()
 
-def answer_quiz(quiz:vclass.Quiz, count:int, qna:answer.QnA) -> int:
+def answer_quiz(quiz:vclass.Quiz, count:int, qna:answer.QnA, delay=2) -> int:
     """ Answer quiz 
     return: answered question count """
     debug.log(f"total question: {count}", newline=True)
@@ -43,7 +43,7 @@ def answer_quiz(quiz:vclass.Quiz, count:int, qna:answer.QnA) -> int:
     next_question_available = quiz.next_question(check=True)
 
     for _ in range(1, count+1):
-        time.sleep(2)
+        time.sleep(delay)
         question = quiz.get_current_question()       
         ans = qna.get_answer(question)
 
@@ -65,8 +65,10 @@ def main(config_path:str='config.ini'):
 
     # prevents an empty tkinter window from appearing
     tkinter.Tk().withdraw()
-    #ansdoc = answer.DOCX(get_answer_doc_path())
-    ansdoc = answer.TXT(get_answer_doc_path(ext='.txt'))
+    ansdoc = answer.define_doc(get_answer_doc_path())
+    if not ansdoc.confirm():
+        print("Failed to extract question and answer from given document")
+        exit()
 
     # verify quiz url
     quiz_url = input_valid_url(
@@ -82,7 +84,11 @@ def main(config_path:str='config.ini'):
     question_count = quiz.attempt()
 
     # answer quiz
-    answered_count = answer_quiz(quiz, question_count, ansdoc.qna)
+    answered_count = answer_quiz(
+        quiz=quiz,
+        count=question_count,
+        qna=ansdoc.qna,
+        delay=config.getint('vclass', 'answer_delay'))
     ask_submit_quiz_confirmation = config['vclass'].getboolean('submit_quiz_confirmation')
     if (answered_count == question_count):
         if quiz.ask_submit_quiz_confirmation(ask_submit_quiz_confirmation):

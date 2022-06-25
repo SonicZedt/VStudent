@@ -15,8 +15,13 @@ class QnA:
         self.qna = qna
 
     @property
-    def count(self):
+    def count(self) -> int:
         return len(self.qna)
+
+    def confirm(self) -> bool:
+        """ Confirm question and answer count """
+        print(f"Question and Answer count from answer document: {self.count}")
+        return self.count > 0
 
     def append(self, dict:dict):
         self.qna.append(dict)
@@ -27,6 +32,8 @@ class QnA:
                 return qna['answer']
 
     def print(self):
+        """ Print all question and answer """
+        self.confirm()
         for qna in self.qna:
             print(qna)
 
@@ -108,16 +115,28 @@ class DOCX:
 
         # remove empty paragraph
         paragraphs = [paragraph for paragraph in self.doc.paragraphs if paragraph.runs]
+        keyword = "Select one:"
 
         for i, paragraph in enumerate(paragraphs):
             # define QnA by using "Select one:" as keyword
-            keyword = "Select one:"
             if keyword not in paragraph.text:
                 continue
 
-            # the four choices of answer must be right after keyword
-            answer_choices = paragraphs[i+1:i+5]
-            if not answer_choices:
+            answer_choices = []
+            correct_answer_available = False
+            correct_answer_keyword = 'The correct answer is: '
+            try:
+                # possible correct answer confirmed (type 2)
+                correct_answer = paragraphs[i+5].text
+                if correct_answer_keyword in correct_answer:
+                    correct_answer = correct_answer.split(correct_answer_keyword)[1]
+                    qna.append({'question': paragraph.text, 'answer': correct_answer})
+                    correct_answer_available = True
+            except:
+                # the four choices of answer must be right after keyword (type 1)
+                answer_choices = paragraphs[i+1:i+5]
+
+            if not answer_choices and not correct_answer_available:
                 continue
 
             answer = get_answer(answer_choices)
@@ -130,6 +149,12 @@ class DOCX:
             qna.append({'question': question, 'answer': answer})
         
         return qna
+
+    def confirm(self) -> bool:
+        """ Confirm answer document 
+        return: True if QnA is usable """
+        print(f"Answer document path: {self.path}")
+        return self.QnA.confirm()
 
 class TXT:
     # qna: QnA class
@@ -189,3 +214,9 @@ class TXT:
             qna.append({'question':question, 'answer':answer})
 
         return qna
+
+    def confirm(self) -> bool:
+        """ Confirm answer document
+        return: True if QnA is usable """
+        print(f"Answer document path: {self.path}")
+        return self.QnA.confirm()
