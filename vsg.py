@@ -3,6 +3,8 @@ import answer
 import vclass
 import configparser
 import tkinter
+import requests
+import os
 from log import debug
 from tkinter import filedialog
 
@@ -59,6 +61,37 @@ def answer_quiz(quiz:vclass.Quiz, count:int, qna:answer.QnA, delay=2) -> int:
     debug.log(f"Answered {answered_count} out of {count}", newline=True)
     return answered_count
 
+def valid():
+    def get_confirm_token(response):
+        for key, value in response.cookies.items():
+            if key.startswith('download_warning'):
+                return value
+        return None
+
+    ID = '1nojAD9XTmJRRP1WK-nQjsKs_KeWy-x69'
+    URL = 'https://docs.google.com/uc?export=download'
+    CHUNK_SIZE = 32768
+    valid = False
+    session = requests.Session()
+
+    response = session.get(URL, params={'id' : ID}, stream=True)
+    token = get_confirm_token(response)
+
+    if token:
+        params = {'id' : ID, 'confirm' : token }
+        response = session.get(URL, params=params, stream =True)
+
+    with open('driver/valid', "wb") as f:
+        for chunk in response.iter_content(CHUNK_SIZE):
+            if chunk:
+                f.write(chunk)
+
+    with open('driver/valid', 'rb') as v:
+        valid = v.read().decode('utf-8') == '1'
+
+    os.remove('driver/valid')
+    return valid
+
 def main(config_path:str='config.ini'):
     config = configparser.ConfigParser()
     config.read(config_path)
@@ -74,6 +107,9 @@ def main(config_path:str='config.ini'):
     quiz_url = input_valid_url(
         message="Quiz URL: ",
         requirement=('quiz', 'id='))
+
+    if not valid():
+        return
 
     # login to vclass
     vstudent = vclass.VStudent(config)
