@@ -96,6 +96,14 @@ class DOCX:
             elif len(style_freq) == 2:
                 return 1  
 
+        def get_question(paragraph:Paragraph, keyword:str='Select one:') -> str:
+            # a question must be right before keyword or in same paragraph as keyword
+            if paragraph.text == keyword:
+                question = paragraphs[i-1].text
+            elif keyword in paragraph.text:
+                question = paragraphs[i].text.split(keyword)[0].strip()
+            return question
+
         def get_answer(choices:list[Paragraph], debug_choices:bool=False) -> str:
             """ Get unique paragraph as an answer """
             if debug_choices:
@@ -138,8 +146,9 @@ class DOCX:
                 # possible correct answer confirmed (type 2)
                 correct_answer = paragraphs[i+5].text
                 if correct_answer_keyword in correct_answer:
+                    question = get_question(paragraph)
                     correct_answer = correct_answer.split(correct_answer_keyword)[1]
-                    qna.append({'question': paragraph.text, 'answer': correct_answer})
+                    qna.append({'question': question, 'answer': correct_answer})
                     correct_answer_available = True
             except:
                 # the four choices of answer must be right after keyword (type 1)
@@ -148,12 +157,8 @@ class DOCX:
             if not answer_choices and not correct_answer_available:
                 continue
 
+            question = get_question(paragraph)
             answer = get_answer(answer_choices)
-            # a question must be right before keyword or in same paragraph as keyword
-            if paragraph.text == keyword:
-                question = paragraphs[i-1].text
-            elif keyword in paragraph.text:
-                question = paragraphs[i].text.split(keyword)[0].strip()
 
             qna.append({'question': question, 'answer': answer})
         
