@@ -137,5 +137,9 @@ config.ini
 # Doc
 doc/*
 
-# Dummy page
+# Dummy
 vclass_page/*
+output/*
+
+# Development environment
+development/**

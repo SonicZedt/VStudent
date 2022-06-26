@@ -14,7 +14,7 @@ def input_valid_url(message:str, requirement:tuple):
     while True:
         url = input(message)
         if url.lower() in ('N', 'n'):
-            app.exit()
+            app.exit_app()
         elif not all([req in url for req in requirement]):
             print("Invalid URL!, enter [N/n] to exit: ")
             continue
@@ -29,14 +29,14 @@ def get_answer_doc_path(accepted_ext:list[str]=['.docx', '.txt']) -> str:
         if [True for ext in accepted_ext if path.endswith(ext)]:
             return path
         elif not path:
-            app.exit()
+            app.exit_app()
         
         while True:
             choice = input("Invalid document type. Enter [Y/y] to select another document or [N/n] to exit: ").lower()
             if choice == 'y':
                 break
             elif choice == 'n':
-                app.exit()
+                app.exit_app()
 
 def answer_quiz(quiz:vclass.Quiz, count:int, qna:answer.QnA, delay=2) -> int:
     """ Answer quiz 
@@ -97,12 +97,14 @@ def main(config_path:str='config.ini'):
     config = configparser.ConfigParser()
     config.read(config_path)
 
+    app.check_version()
+
     # prevents an empty tkinter window from appearing
     tkinter.Tk().withdraw()
     ansdoc = answer.define_doc(get_answer_doc_path())
     if not ansdoc.confirm():
         print("Failed to extract question and answer from given document")
-        app.exit()
+        app.exit_app()
 
     # verify quiz url
     quiz_url = input_valid_url(
