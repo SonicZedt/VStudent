@@ -1,3 +1,4 @@
+import app
 from log import debug
 from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
@@ -37,7 +38,7 @@ class VStudent:
             if confirm in ('y', 'yes'):
                 break
             elif confirm in ('n', 'no'):
-                exit()
+                app.exit()
             else:
                 print("Invalid input!")
 
@@ -69,7 +70,7 @@ class VStudent:
             debug.log("Login failed", self.verbose)
             self.success = False
             if exit_on_fail:
-                exit()
+                app.exit()
 
         return self.success
 
@@ -90,7 +91,7 @@ class Course:
             debug.log("Course page reached", self.verbose, newline=True)
         except:
             debug.log("Failed to reach course page", self.verbose, newline=True)
-            exit()
+            app.exit()
 
     def describe(self) -> dict:
         """ Course description """
@@ -124,7 +125,7 @@ class Quiz:
             debug.log(f"Course title:\n{self.browser.find_element(By.CSS_SELECTOR, 'h1').text}")
         except:
             debug.log("Failed to reach quiz page", self.verbose, newline=True)
-            exit()
+            app.exit()
 
     def describe(self) -> dict:
         """ Quiz description """
@@ -160,7 +161,7 @@ class Quiz:
             debug.log("Quiz attempted", self.verbose, newline=True)
         except:
             debug.log("Failed to attempt quiz page", self.verbose, newline=True)
-            exit()
+            app.exit()
 
         # should be _str_ (1 of n) where n is total question
         return int(self.browser.title.rsplit(' ', 1)[1][:-1])
