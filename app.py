@@ -1,4 +1,3 @@
-import app
 import os
 import sys
 import shutil
@@ -86,7 +85,7 @@ def check_version():
         sys.stdout.write(f"Done\n")
 
         print("Update complete, please restart the program")
-        app.exit_app()
+        exit_app()
 
     if ask_update(current, latest['tag_name'][1:], 0, 1):
         update()
