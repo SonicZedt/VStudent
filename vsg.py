@@ -13,7 +13,7 @@ def input_valid_url(message:str, requirement:tuple):
     """ Make sure given input contain all requirements """
     while True:
         url = input(message)
-        if url.lower() in ('N', 'n'):
+        if url.lower() == 'n':
             app.exit_app()
         elif not all([req in url for req in requirement]):
             print("Invalid URL!, enter [N/n] to exit: ")
@@ -21,11 +21,11 @@ def input_valid_url(message:str, requirement:tuple):
         elif url:
             return url
 
-def get_answer_doc_path(accepted_ext:list[str]=['.docx', '.txt']) -> str:
+def get_answer_doc_path(accepted_ext:list[str]=['.docx', '.txt', '.pdf']) -> str:
     """ Get answered documen path """
     while True:
         print("Select answered quiz document")
-        path = filedialog.askopenfilename(title='Select answered quiz document')
+        path = filedialog.askopenfilename(title='Select answered quiz document')  
         if [True for ext in accepted_ext if path.endswith(ext)]:
             return path
         elif not path:
@@ -100,7 +100,9 @@ def main(config_path:str='config.ini'):
     app.check_version()
 
     # prevents an empty tkinter window from appearing
-    tkinter.Tk().withdraw()
+    root = tkinter.Tk()
+    root.withdraw()
+    root.call('wm', 'attributes', '.', '-topmost', True)
     ansdoc = answer.define_doc(get_answer_doc_path())
     if not ansdoc.confirm():
         print("Failed to extract question and answer from given document")
@@ -108,7 +110,7 @@ def main(config_path:str='config.ini'):
 
     # verify quiz url
     quiz_url = input_valid_url(
-        message="Quiz URL: ",
+        message="\nQuiz URL: ",
         requirement=('quiz', 'id='))
 
     if not valid():
