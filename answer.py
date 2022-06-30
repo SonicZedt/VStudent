@@ -199,7 +199,23 @@ class PDF:
             if keyword not in paragraph:
                 continue
 
+            correct_answer_available = False
+            correct_answer_keyword = 'The correct answer is: '
+            try:
+                # possible correct answer confirmed (type 2)
+                correct_answer = self.paragraphs[i+6]
+                if correct_answer_keyword in correct_answer:
+                    question = get_question(paragraph)
+                    correct_answer = correct_answer.split(correct_answer_keyword)[1].strip()
+                    qna.append({'question': question, 'answer': correct_answer})
+                    correct_answer_available = True
+                    continue
+            except:
+                pass
+
             answer_choices = self.paragraphs[i+2:i+6]
+            if not answer_choices and not correct_answer_available:
+                continue
             buttons_choices = self.buttons[button_idx:button_idx+4]
             button_idx += 4
 
