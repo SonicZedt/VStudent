@@ -3,7 +3,7 @@ A BOT to answer multiple choice quiz in moodle platform such as [vclass](https:/
 
 ## What VStudent needs
 * Internet connection to access vclass platform
-* An answer document (.docx or .txt) in certain format to answer the quiz. Read [Answer document format](#answer-document-format) for more information.
+* An answer document (.docx, .txt, or .pdf) in certain format to answer the quiz. Read [Answer document format](#answer-document-format) for more information.
 * An URL to the quiz in vclass platform
 
 ## Answer document format
