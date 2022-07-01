@@ -67,4 +67,3 @@ Configration is done in `config.ini` file.
 3. Failed to extract question and answer from type 1 document (.txt) with UTF-8 encoding. Temporary workaround is to change the encoding to ANSI which can be done by opening the file in Notepad and save as new document with ANSI is selected as _Encoding_ option.
 4. Failed to launch BOT executable file (vsg.exe) if mozila firefox has not been installed. This could be fixed by launching the driver executable inside `driver/` folder.
 5. Any differences in visual arrangement in a PDF document could cause the BOT to fail to do extraction process.
-6. Failed to replace executable (vsg.exe) with new one on updating process. Temporary solution is to extract the zip file and replace vsg.exe manually
